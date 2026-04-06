@@ -8,3 +8,9 @@ Route::get('/sensor-data', [DashboardController::class, 'getSensorData']);
 
 // When React visits /api/alerts, run the getAlerts function
 Route::get('/alerts', [DashboardController::class, 'getAlerts']);
+
+// The Login route
+Route::post('/login', [DashboardController::class, 'login']);
+
+// The Logout route
+Route::post('/logout', [DashboardController::class, 'logout']);
