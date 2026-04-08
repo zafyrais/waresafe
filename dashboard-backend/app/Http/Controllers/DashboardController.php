@@ -22,6 +22,13 @@ class DashboardController extends Controller
         return response()->json($alerts);
     }
 
+    // Fetch all critical alerts
+    public function getSensors() 
+    {
+        $sensors = DB::table('sensors')->orderBy('sensor_id', 'desc')->get();
+        return response()->json($sensors);
+    }
+
     // NEW: The Login and Logging Function
     public function login(Request $request)
     {
@@ -70,5 +77,64 @@ class DashboardController extends Controller
         }
 
         return response()->json(['success' => false, 'message' => 'User not found'], 404);
+    }
+
+    // Compile all data specifically for the Warehouse RFID table
+    public function getWarehouseRfidData()
+    {
+        $data = DB::table('sensor_data')
+            // 1. Join the sensor table to get the sensor type
+            ->join('sensors', 'sensor_data.sensor_id', '=', 'sensors.sensor_id')
+            // 2. Join the device table to get the device info
+            ->join('devices', 'sensors.device_id', '=', 'devices.device_id')
+            // 3. Join the zone table to filter by location
+            ->join('zones', 'devices.zone_id', '=', 'zones.zone_id')
+            
+            // Filter: Only Warehouse zone AND only RFID sensors
+            ->where('zones.zone_name', 'Warehouse')
+            ->where('sensors.sensor_type', 'RFID')
+            
+            // Select exactly what we want to send to React to avoid confusing duplicates
+            ->select(
+                'sensor_data.data_id',
+                'sensors.sensor_id',
+                'sensors.sensor_type',
+                'devices.device_type',
+                'sensor_data.value', // This will be your "Description"
+                'sensor_data.timestamp'
+            )
+            ->orderBy('sensor_data.timestamp', 'desc')
+            ->get();
+
+        return response()->json($data);
+    }
+
+    public function getOfficeRfidData()
+    {
+        $data = DB::table('sensor_data')
+            // 1. Join the sensor table to get the sensor type
+            ->join('sensors', 'sensor_data.sensor_id', '=', 'sensors.sensor_id')
+            // 2. Join the device table to get the device info
+            ->join('devices', 'sensors.device_id', '=', 'devices.device_id')
+            // 3. Join the zone table to filter by location
+            ->join('zones', 'devices.zone_id', '=', 'zones.zone_id')
+            
+            // Filter: Only Office zone AND only RFID sensors
+            ->where('zones.zone_name', 'Office')
+            ->where('sensors.sensor_type', 'RFID')
+            
+            // Select exactly what we want to send to React to avoid confusing duplicates
+            ->select(
+                'sensor_data.data_id',
+                'sensors.sensor_id',
+                'sensors.sensor_type',
+                'devices.device_type',
+                'sensor_data.value', // This will be your "Description"
+                'sensor_data.timestamp'
+            )
+            ->orderBy('sensor_data.timestamp', 'desc')
+            ->get();
+
+        return response()->json($data);
     }
 }

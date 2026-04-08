@@ -64,6 +64,7 @@
 
 body {
   margin: 0;
+  
 }
 
 h1,
@@ -108,4 +109,13 @@ code {
   line-height: 135%;
   padding: 4px 8px;
   background: var(--code-bg);
+}
+
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden; /* This absolutely prevents the main window from scrolling */
+  text-align: left;
 }

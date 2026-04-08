@@ -9,8 +9,17 @@ Route::get('/sensor-data', [DashboardController::class, 'getSensorData']);
 // When React visits /api/alerts, run the getAlerts function
 Route::get('/alerts', [DashboardController::class, 'getAlerts']);
 
+// When React visits /api/sensors, run the getSensors function
+Route::get('/sensors', [DashboardController::class, 'getSensors']);
+
 // The Login route
 Route::post('/login', [DashboardController::class, 'login']);
 
 // The Logout route
 Route::post('/logout', [DashboardController::class, 'logout']);
+
+// called rfid warehouse data
+Route::get('/warehouse/rfid', [DashboardController::class, 'getWarehouseRfidData']);
+
+// called rfid office data
+Route::get('/office/rfid', [DashboardController::class, 'getOfficeRfidData']);

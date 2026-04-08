@@ -46,7 +46,7 @@ class DatabaseSeeder extends Seeder
             ];
         }
         
-        // Dump all 100 fake toys into the drawer at once
+        // Dump all 10 fake toys into the drawer at once
         DB::table('sensor_data')->insert($fakeData);
 
         // 5. Add a fake Admin User
