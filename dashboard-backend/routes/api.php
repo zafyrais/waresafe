@@ -23,3 +23,6 @@ Route::get('/warehouse/rfid', [DashboardController::class, 'getWarehouseRfidData
 
 // called rfid office data
 Route::get('/office/rfid', [DashboardController::class, 'getOfficeRfidData']);
+
+// called cyber attack data
+Route::get('/attacks', [DashboardController::class, 'getCyberAttack']);

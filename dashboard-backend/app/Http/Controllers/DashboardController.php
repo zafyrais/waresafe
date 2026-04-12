@@ -137,4 +137,31 @@ class DashboardController extends Controller
 
         return response()->json($data);
     }
+
+    public function getCyberAttack()
+    {
+        $data = DB::table('alerts')
+            // 1. Join the sensor table to get the sensor type
+            ->join('sensors', 'alerts.sensor_id', '=', 'sensors.sensor_id')
+            // 2. Join the device table to get the device info
+            ->join('devices', 'sensors.device_id', '=', 'devices.device_id')
+            // 3. Join the zone table to filter by location
+            ->join('zones', 'devices.zone_id', '=', 'zones.zone_id')
+            // 4. Join the attack table to filter by attack type
+            ->join('attack_scenarios', 'alerts.attack_id', '=', 'attack_scenarios.attack_id')
+            
+            // Select exactly what we want to send to React to avoid confusing duplicates
+            ->select(
+                'alerts.alert_id',
+                'sensors.sensor_type', 
+                'devices.device_type', 
+                'zones.zone_name',
+                'attack_scenarios.attack_type',
+                'alerts.timestamp'
+            )
+            ->orderBy('alerts.timestamp', 'desc')
+            ->get();
+
+        return response()->json($data);
+    }
 }

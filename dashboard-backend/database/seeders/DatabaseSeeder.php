@@ -69,8 +69,8 @@ class DatabaseSeeder extends Seeder
         DB::table('alerts')->insert([
             'alert_id' => 1,
             'attack_id' => 1,
-            'alert_type' => 'Critical',
-            'description' => 'Gateway unresponsive due to high traffic volume'
+            'sensor_id' => 1,
+            'alert_type' => 'Data Flooding',
         ]);
     }
 }

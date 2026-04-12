@@ -14,7 +14,15 @@ interface SensorData {
 interface AlertData {
   alert_id: number;
   alert_type: string;
-  description: string;
+  timestamp: string;
+}
+
+interface AttackRecord {
+  alert_id: number;
+  sensor_type: string;
+  device_type: string;
+  zone_name: string;
+  attack_type: string;
   timestamp: string;
 }
 
@@ -24,7 +32,6 @@ function App() {
   const [activeEmail, setActiveEmail] = useState(() => localStorage.getItem('wareSafeEmail') || '');
   
   // --- STATE: NAVIGATION ---
-  // This new state tracks which page we are currently looking at
   const [activePage, setActivePage] = useState('dashboard');
   
   const [email, setEmail] = useState('');
@@ -39,6 +46,10 @@ function App() {
   const [rfidSearch, setRfidSearch] = useState('');
   const [warehouseRfid, setWarehouseRfid] = useState<SensorData[]>([]);
   const [officeRfid, setOfficeRfid] = useState<SensorData[]>([]);
+
+  // Search state for Cyber Attack Records
+  const [attackRecords, setAttackRecords] = useState<AttackRecord[]>([]);
+  const [attackSearch, setAttackSearch] = useState('');
   
   // Clock State
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -67,9 +78,15 @@ function App() {
       .then(data => setWarehouseRfid(data))
       .catch(err => console.error(err));
 
-      fetch('http://localhost:8000/api/office/rfid')
+    fetch('http://localhost:8000/api/office/rfid')
       .then(res => res.json())
       .then(data => setOfficeRfid(data))
+      .catch(err => console.error(err));
+
+      // Fetch the joined Attack Records
+    fetch('http://localhost:8000/api/attacks')
+      .then(res => res.json())
+      .then(data => setAttackRecords(data))
       .catch(err => console.error(err));
 
     return () => clearInterval(timer);
@@ -204,8 +221,21 @@ function App() {
             Office
           </div>
 
-          <div className="fw-bold px-3 py-2" style={{ cursor: 'pointer' }}>Mitigation Education</div>
-          <div className="fw-bold px-3 py-2" style={{ cursor: 'pointer' }}>Cyber Attack Records</div>
+          <div 
+            className="fw-bold px-3 py-2" 
+            style={{ backgroundColor: activePage === 'education' ? '#FFFFFF' : 'transparent', borderRadius: '8px', cursor: 'pointer'}}
+            onClick={() => setActivePage('education')}
+          >
+            Mitigation Education
+          </div>
+
+          <div 
+            className="fw-bold px-3 py-2" 
+            style={{ backgroundColor: activePage === 'attacks' ? '#FFFFFF' : 'transparent', borderRadius: '8px', cursor: 'pointer'}}
+            onClick={() => setActivePage('attacks')}
+          >
+            Cyber Attack Records
+          </div>
         </div>
 
         <div className="fw-bold px-3 py-2 mt-auto d-flex align-items-center" style={{ cursor: 'pointer' }} onClick={handleLogout}>
@@ -515,6 +545,126 @@ function App() {
           </div>
         )}
 
+        {/* ----------------------------------------------------------------- */}
+        {/* NEW DYNAMIC CONTENT: MITIGATION EDUCATION VIEW */}
+        {/* ----------------------------------------------------------------- */}
+        {activePage === 'education' && (
+          <div className="p-5">
+            <h2 className="fw-bold mb-4">Mitigation Education</h2>
+
+            {/* Module A */}
+            <div className="card border-0 shadow-sm rounded-3 mb-4">
+              <div className="card-body p-4">
+                {/* Gray Title Block inside the card */}
+                <div className="fw-bold text-dark" style={{ backgroundColor: '#f2f2f2', padding: '15px 20px', borderRadius: '5px', marginBottom: '15px' }}>
+                  Module A
+                </div>
+                <p className="mb-0 text-dark fw-bold" style={{ paddingLeft: '5px' }}>
+                  Simulation training module of scenario A
+                </p>
+              </div>
+            </div>
+
+            {/* Module B */}
+            <div className="card border-0 shadow-sm rounded-3 mb-4">
+              <div className="card-body p-4">
+                <div className="fw-bold text-dark" style={{ backgroundColor: '#f2f2f2', padding: '15px 20px', borderRadius: '5px', marginBottom: '15px' }}>
+                  Module B
+                </div>
+                <p className="mb-0 text-dark fw-bold" style={{ paddingLeft: '5px' }}>
+                  Simulation training module of scenario B
+                </p>
+              </div>
+            </div>
+
+            {/* Module C */}
+            <div className="card border-0 shadow-sm rounded-3 mb-4">
+              <div className="card-body p-4">
+                <div className="fw-bold text-dark" style={{ backgroundColor: '#f2f2f2', padding: '15px 20px', borderRadius: '5px', marginBottom: '15px' }}>
+                  Module C
+                </div>
+                <p className="mb-0 text-dark fw-bold" style={{ paddingLeft: '5px' }}>
+                  Simulation training module of scenario C
+                </p>
+              </div>
+            </div>
+
+          </div>
+        )}
+
+        {/* ----------------------------------------------------------------- */}
+        {/* NEW DYNAMIC CONTENT: CYBER ATTACK RECORDS VIEW */}
+        {/* ----------------------------------------------------------------- */}
+        {activePage === 'attacks' && (
+          <div className="p-5">
+            <h2 className="fw-bold mb-4">Cyber Attack Records</h2>
+            
+            <div className="card border-0 shadow-sm rounded-3 mb-4">
+              <div className="card-body px-4 py-4">
+                
+                {/* Table Controls */}
+                <div className="d-flex justify-content-between align-items-center mb-3">
+                  <div className="d-flex align-items-center">
+                    <select className="form-select form-select-sm me-2" style={{ width: '70px' }}>
+                      <option>10</option>
+                      <option>25</option>
+                      <option>50</option>
+                    </select>
+                    <span>entries per page</span>
+                  </div>
+                  <div className="d-flex align-items-center">
+                    <span className="me-2 fw-bold">Search:</span>
+                    <input 
+                      type="text" 
+                      className="form-control form-control-sm" 
+                      style={{ width: '200px' }} 
+                      value={attackSearch}
+                      onChange={(e) => setAttackSearch(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                {/* The Data Table */}
+                <div className="table-responsive">
+                  <table className="table table-bordered text-center align-middle">
+                    <thead style={{ backgroundColor: '#fafafa' }}>
+                      <tr>
+                        <th className="py-3">No</th>
+                        <th className="py-3">Sensor</th>
+                        <th className="py-3">Device</th>
+                        <th className="py-3">Area</th>
+                        <th className="py-3">Attack Type</th>
+                        <th className="py-3">Timestamp</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {/* Now we use your new attackRecords state! */}
+                      {attackRecords.filter(record => 
+                        record.attack_type.toLowerCase().includes(attackSearch.toLowerCase()) ||
+                        record.zone_name.toLowerCase().includes(attackSearch.toLowerCase()) ||
+                        record.sensor_type.toLowerCase().includes(attackSearch.toLowerCase()) ||
+                        record.device_type.toLowerCase().includes(attackSearch.toLowerCase())
+                      ).slice(0, 10).map((row, index) => (
+                        <tr key={row.alert_id}>
+                          <td>{index + 1}</td>
+                          
+                          {/* Real data replacing the old Xxxx, Aaaa, Warehouse placeholders */}
+                          <td>{row.sensor_type}</td> 
+                          <td>{row.device_type}</td>
+                          <td>{row.zone_name}</td>
+                          
+                          <td>{row.attack_type}</td>
+                          <td>{new Date(row.timestamp).toLocaleString('en-GB')}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

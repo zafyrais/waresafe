@@ -14,12 +14,16 @@ return new class extends Migration
         Schema::create('alerts', function (Blueprint $table) {
             $table->id('alert_id');
             $table->string('alert_type');
-            $table->string('description');
+            /* $table->string('description'); */
             
             // Links back to the attack scenario
             $table->unsignedBigInteger('attack_id')->nullable();
             $table->foreign('attack_id')->references('attack_id')->on('attack_scenarios');
-            
+
+            // Links back to the sensor that triggered the alert
+            $table->unsignedBigInteger('sensor_id')->nullable();
+            $table->foreign('sensor_id')->references('sensor_id')->on('sensors');
+
             $table->timestamp('timestamp')->useCurrent();
         });
     }
