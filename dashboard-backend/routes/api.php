@@ -18,11 +18,13 @@ Route::post('/login', [DashboardController::class, 'login']);
 // The Logout route
 Route::post('/logout', [DashboardController::class, 'logout']);
 
-// called rfid warehouse data
+Route::get('/office/sensors', [DashboardController::class, 'getOfficeSensorData']);
+Route::get('/office/alerts', [DashboardController::class, 'getOfficeAlerts']);
+Route::get('/office/vibration', [DashboardController::class, 'getOfficeVibrationData']);
+Route::get('/office/buzzerA', [DashboardController::class, 'getOfficeBuzzerData']); // BuZZERA ternyata belum ada subscribernya di MQTTX
+
+Route::get('/warehouse/sensors', [DashboardController::class, 'getWarehouseSensorData']);
 Route::get('/warehouse/rfid', [DashboardController::class, 'getWarehouseRfidData']);
+Route::get('/warehouse/alerts', [DashboardController::class, 'getWarehouseAlerts']);
 
-// called rfid office data
-Route::get('/office/rfid', [DashboardController::class, 'getOfficeRfidData']);
-
-// called cyber attack data
 Route::get('/attacks', [DashboardController::class, 'getCyberAttack']);

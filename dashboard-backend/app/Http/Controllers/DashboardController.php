@@ -9,159 +9,172 @@ use Illuminate\Support\Facades\Hash; // Added for password checking
 class DashboardController extends Controller
 {
     // Fetch the latest 20 sensor readings
-    public function getSensorData() 
-    {
-        $data = DB::table('sensor_data')->orderBy('timestamp', 'desc')->limit(20)->get();
-        return response()->json($data);
-    }
+    public function getOfficeSensorData()
+{
+    $data = DB::table('sensor_data')
+        ->join('sensors', 'sensor_data.sensor_id', '=', 'sensors.sensor_id')
+        ->join('devices', 'sensors.device_id', '=', 'devices.device_id')
+        ->join('zones', 'devices.zone_id', '=', 'zones.zone_id')
+        ->where('zones.zone_name', 'Office')
+        ->whereIn('sensors.sensor_type', [
+            'PIR Motion',
+            'Door Reed Switch A',
+            'Vibration Sensor',
+            'Buzzer A'
+        ])
+        ->select(
+            'sensor_data.data_id',
+            'sensors.sensor_id',
+            'sensors.sensor_type',
+            'devices.device_type',
+            'zones.zone_name',
+            'sensor_data.value',
+            'sensor_data.timestamp'
+        )
+        ->orderBy('sensor_data.timestamp', 'desc')
+        ->limit(50)
+        ->get();
 
-    // Fetch all critical alerts
-    public function getAlerts() 
-    {
-        $alerts = DB::table('alerts')->orderBy('timestamp', 'desc')->get();
-        return response()->json($alerts);
-    }
+    return response()->json($data);
+}
 
-    // Fetch all critical alerts
-    public function getSensors() 
-    {
-        $sensors = DB::table('sensors')->orderBy('sensor_id', 'desc')->get();
-        return response()->json($sensors);
-    }
+public function getWarehouseSensorData()
+{
+    $data = DB::table('sensor_data')
+        ->join('sensors', 'sensor_data.sensor_id', '=', 'sensors.sensor_id')
+        ->join('devices', 'sensors.device_id', '=', 'devices.device_id')
+        ->join('zones', 'devices.zone_id', '=', 'zones.zone_id')
+        ->where('zones.zone_name', 'Warehouse')
+        ->whereIn('sensors.sensor_type', [
+            'RFID',
+            'RFID RC522',
+            'Door Reed',
+            'Reed Switch',
+            'Warehouse Door',
+            'Alarm Module',
+            'LED',
+            'Buzzer',
+            'LCD'
+        ])
+        ->select(
+            'sensor_data.data_id',
+            'sensors.sensor_id',
+            'sensors.sensor_type',
+            'devices.device_type',
+            'zones.zone_name',
+            'sensor_data.value',
+            'sensor_data.timestamp'
+        )
+        ->orderBy('sensor_data.timestamp', 'desc')
+        ->limit(50)
+        ->get();
 
-    // NEW: The Login and Logging Function
-    public function login(Request $request)
-    {
-        // 1. Find the user in the database by their email
-        $user = DB::table('users')->where('email', $request->email)->first();
+    return response()->json($data);
+}
+public function getOfficeVibrationData()
+{
+    $data = DB::table('sensor_data')
+        ->join('sensors', 'sensor_data.sensor_id', '=', 'sensors.sensor_id')
+        ->join('devices', 'sensors.device_id', '=', 'devices.device_id')
+        ->join('zones', 'devices.zone_id', '=', 'zones.zone_id')
+        ->where('zones.zone_name', 'Office')
+        ->where('sensors.sensor_type', '3')
+        ->select(
+            'sensor_data.data_id',
+            'sensors.sensor_id',
+            'sensors.sensor_type',
+            'devices.device_type',
+            'zones.zone_name',
+            'sensor_data.value',
+            'sensor_data.timestamp'
+        )
+        ->orderBy('sensor_data.timestamp', 'desc')
+        ->limit(20)
+        ->get();
 
-        // 2. If the user exists AND the password matches the encrypted one in the DB
-        if ($user && Hash::check($request->password, $user->password)) {
-            
-            // 3. Write the exact action into the user_activity_logs drawer
-            DB::table('user_activity_logs')->insert([
-                'user_id' => $user->user_id,
-                'action_type' => $user->name . ' login', // e.g., "Security Admin login"
-                'timestamp' => now()
-            ]);
+    return response()->json($data);
+}
+public function getOfficeBuzzerData()
+{
+    $data = DB::table('sensor_data')
+        ->join('sensors', 'sensor_data.sensor_id', '=', 'sensors.sensor_id')
+        ->join('devices', 'sensors.device_id', '=', 'devices.device_id')
+        ->join('zones', 'devices.zone_id', '=', 'zones.zone_id')
+        ->where('zones.zone_name', 'Office')
+        ->where('sensors.sensor_type', '4')
+        ->select(
+            'sensor_data.data_id',
+            'sensors.sensor_id',
+            'sensors.sensor_type',
+            'devices.device_type',
+            'zones.zone_name',
+            'sensor_data.value',
+            'sensor_data.timestamp'
+        )
+        ->orderBy('sensor_data.timestamp', 'desc')
+        ->limit(50)
+        ->get();
 
-            // 4. Tell React it was successful
-            return response()->json([
-                'success' => true,
-                'user_name' => $user->name
-            ]);
-        }
+    return response()->json($data);
+}
+public function getOfficeAlerts()
+{
+    $alerts = DB::table('alerts')
+        ->leftJoin('sensors', 'alerts.sensor_id', '=', 'sensors.sensor_id')
+        ->leftJoin('devices', 'sensors.device_id', '=', 'devices.device_id')
+        ->leftJoin('zones', 'devices.zone_id', '=', 'zones.zone_id')
+        ->where('zones.zone_name', 'Office')
+        ->whereIn('alerts.alert_type', [
+            'abnormal_vibration_detected',
+            'vibration_data_anomaly_detected',
+            'danger_vibration_alert',
+            'danger_vibration_detected',
+            'area_a_danger_triggered',
+            'manual_abnormal_vibration_triggered',
+            'vibration_alert',
+            'security_event'
+        ])
+        ->select(
+            'alerts.alert_id',
+            'alerts.alert_type',
+            'sensors.sensor_id',
+            'sensors.sensor_type',
+            'devices.device_type',
+            'zones.zone_name',
+            'alerts.timestamp'
+        )
+        ->orderBy('alerts.timestamp', 'desc')
+        ->limit(50)
+        ->get();
 
-        // 5. If it fails, tell React they are unauthorized
-        return response()->json([
-            'success' => false,
-            'message' => 'Invalid email or password'
-        ], 401);
-    }
+    return response()->json($alerts);
+}
 
-    // NEW: The Logout Logging Function
-    public function logout(Request $request)
-    {
-        // Find the user by their email
-        $user = DB::table('users')->where('email', $request->email)->first();
+public function getWarehouseAlerts()
+{
+    $alerts = DB::table('alerts')
+        ->leftJoin('sensors', 'alerts.sensor_id', '=', 'sensors.sensor_id')
+        ->leftJoin('devices', 'sensors.device_id', '=', 'devices.device_id')
+        ->leftJoin('zones', 'devices.zone_id', '=', 'zones.zone_id')
+        ->where('zones.zone_name', 'Warehouse')
+        ->whereIn('alerts.alert_type', [
+            'alarm_alert',
+            'false_alarm_flood',
+            'security_suppression',
+            'alert_bypass',
+            'security_event'
+        ])
+        ->select(
+            'alerts.alert_id',
+            'alerts.alert_type',
+            'sensors.sensor_type',
+            'devices.device_type',
+            'zones.zone_name',
+            'alerts.timestamp'
+        )
+        ->orderBy('alerts.timestamp', 'desc')
+        ->get();
 
-        if ($user) {
-            // Write the exact action into the user_activity_logs drawer
-            DB::table('user_activity_logs')->insert([
-                'user_id' => $user->user_id,
-                'action_type' => $user->name . ' logout', // e.g., "Security Admin logout"
-                'timestamp' => now()
-            ]);
-
-            return response()->json(['success' => true]);
-        }
-
-        return response()->json(['success' => false, 'message' => 'User not found'], 404);
-    }
-
-    // Compile all data specifically for the Warehouse RFID table
-    public function getWarehouseRfidData()
-    {
-        $data = DB::table('sensor_data')
-            // 1. Join the sensor table to get the sensor type
-            ->join('sensors', 'sensor_data.sensor_id', '=', 'sensors.sensor_id')
-            // 2. Join the device table to get the device info
-            ->join('devices', 'sensors.device_id', '=', 'devices.device_id')
-            // 3. Join the zone table to filter by location
-            ->join('zones', 'devices.zone_id', '=', 'zones.zone_id')
-            
-            // Filter: Only Warehouse zone AND only RFID sensors
-            ->where('zones.zone_name', 'Warehouse')
-            ->where('sensors.sensor_type', 'RFID')
-            
-            // Select exactly what we want to send to React to avoid confusing duplicates
-            ->select(
-                'sensor_data.data_id',
-                'sensors.sensor_id',
-                'sensors.sensor_type',
-                'devices.device_type',
-                'sensor_data.value', // This will be your "Description"
-                'sensor_data.timestamp'
-            )
-            ->orderBy('sensor_data.timestamp', 'desc')
-            ->get();
-
-        return response()->json($data);
-    }
-
-    public function getOfficeRfidData()
-    {
-        $data = DB::table('sensor_data')
-            // 1. Join the sensor table to get the sensor type
-            ->join('sensors', 'sensor_data.sensor_id', '=', 'sensors.sensor_id')
-            // 2. Join the device table to get the device info
-            ->join('devices', 'sensors.device_id', '=', 'devices.device_id')
-            // 3. Join the zone table to filter by location
-            ->join('zones', 'devices.zone_id', '=', 'zones.zone_id')
-            
-            // Filter: Only Office zone AND only RFID sensors
-            ->where('zones.zone_name', 'Office')
-            ->where('sensors.sensor_type', 'RFID')
-            
-            // Select exactly what we want to send to React to avoid confusing duplicates
-            ->select(
-                'sensor_data.data_id',
-                'sensors.sensor_id',
-                'sensors.sensor_type',
-                'devices.device_type',
-                'sensor_data.value', // This will be your "Description"
-                'sensor_data.timestamp'
-            )
-            ->orderBy('sensor_data.timestamp', 'desc')
-            ->get();
-
-        return response()->json($data);
-    }
-
-    public function getCyberAttack()
-    {
-        $data = DB::table('alerts')
-            // 1. Join the sensor table to get the sensor type
-            ->join('sensors', 'alerts.sensor_id', '=', 'sensors.sensor_id')
-            // 2. Join the device table to get the device info
-            ->join('devices', 'sensors.device_id', '=', 'devices.device_id')
-            // 3. Join the zone table to filter by location
-            ->join('zones', 'devices.zone_id', '=', 'zones.zone_id')
-            // 4. Join the attack table to filter by attack type
-            ->join('attack_scenarios', 'alerts.attack_id', '=', 'attack_scenarios.attack_id')
-            
-            // Select exactly what we want to send to React to avoid confusing duplicates
-            ->select(
-                'alerts.alert_id',
-                'sensors.sensor_type', 
-                'devices.device_type', 
-                'zones.zone_name',
-                'attack_scenarios.attack_type',
-                'alerts.timestamp'
-            )
-            ->orderBy('alerts.timestamp', 'desc')
-            ->get();
-
-        return response()->json($data);
-    }
+    return response()->json($alerts);
+}
 }

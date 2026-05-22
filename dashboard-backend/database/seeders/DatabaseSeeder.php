@@ -27,11 +27,96 @@ class DatabaseSeeder extends Seeder
 
         // 3. Fill the Sensors drawer
         // We use 'device_id' to attach the RFID to the Arduino (1), and the motion/door sensors to the ESP32 (2)
-        DB::table('sensors')->insert([
-            ['sensor_id' => 1, 'sensor_type' => 'RFID', 'status' => 'Active', 'device_id' => 1],
-            ['sensor_id' => 2, 'sensor_type' => 'PIR Motion', 'status' => 'Active', 'device_id' => 2],
-            ['sensor_id' => 3, 'sensor_type' => 'Door Reed Switch', 'status' => 'Active', 'device_id' => 2],
-        ]);
+DB::table('sensors')->insert([
+    [
+        'sensor_id' => 1,
+        'sensor_type' => 'PIR Motion',
+        'status' => 'Active',
+        'device_id' => 1,
+        'created_at' => null,
+        'updated_at' => null,
+    ],
+    [
+        'sensor_id' => 2,
+        'sensor_type' => 'Door Reed Switch A',
+        'status' => 'Active',
+        'device_id' => 1,
+        'created_at' => null,
+        'updated_at' => null,
+    ],
+    [
+        'sensor_id' => 3,
+        'sensor_type' => 'Vibration Sensor',
+        'status' => 'Active',
+        'device_id' => 1,
+        'created_at' => null,
+        'updated_at' => null,
+    ],
+    [
+        'sensor_id' => 4,
+        'sensor_type' => 'Buzzer A',
+        'status' => 'Active',
+        'device_id' => 1,
+        'created_at' => null,
+        'updated_at' => null,
+    ],
+    [
+        'sensor_id' => 5,
+        'sensor_type' => 'RFID',
+        'status' => 'Active',
+        'device_id' => 2,
+        'created_at' => null,
+        'updated_at' => null,
+    ],
+    [
+        'sensor_id' => 6,
+        'sensor_type' => 'Door Reed Switch B',
+        'status' => 'Active',
+        'device_id' => 2,
+        'created_at' => null,
+        'updated_at' => null,
+    ],
+    [
+        'sensor_id' => 7,
+        'sensor_type' => 'LED Light Green',
+        'status' => 'Active',
+        'device_id' => 2,
+        'created_at' => null,
+        'updated_at' => null,
+    ],
+    [
+        'sensor_id' => 8,
+        'sensor_type' => 'LED Light Yellow',
+        'status' => 'Active',
+        'device_id' => 2,
+        'created_at' => null,
+        'updated_at' => null,
+    ],
+    [
+        'sensor_id' => 9,
+        'sensor_type' => 'LED Light Red',
+        'status' => 'Active',
+        'device_id' => 2,
+        'created_at' => null,
+        'updated_at' => null,
+    ],
+    [
+        'sensor_id' => 10,
+        'sensor_type' => 'Buzzer B',
+        'status' => 'Active',
+        'device_id' => 2,
+        'created_at' => null,
+        'updated_at' => null,
+    ],
+    [
+        'sensor_id' => 11,
+        'sensor_type' => 'LCD Display',
+        'status' => 'Active',
+        'device_id' => 2,
+        'created_at' => null,
+        'updated_at' => null,
+    ],
+]);
 
         // 4. Mass-produce fake sensor data
         $fakeData = [];
