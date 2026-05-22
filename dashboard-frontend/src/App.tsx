@@ -416,7 +416,7 @@ function App() {
             style={{ backgroundColor: activePage === 'warehouse' ? '#FFFFFF' : 'transparent', borderRadius: '8px', cursor: 'pointer' }}
             onClick={() => setActivePage('warehouse')}
           >
-            Warehouse
+            Warehouse Monitoring
           </div>
 
           <div
@@ -424,7 +424,7 @@ function App() {
             style={{ backgroundColor: activePage === 'office' ? '#FFFFFF' : 'transparent', borderRadius: '8px', cursor: 'pointer' }}
             onClick={() => setActivePage('office')}
           >
-            Office
+            Office Monitoring
           </div>
 
           <div
@@ -466,50 +466,188 @@ function App() {
         {/* ----------------------------------------------------------------- */}
         {activePage === 'dashboard' && (
           <div className="p-5">
+
             <h2 className="fw-bold mb-4">Dashboard Monitoring</h2>
 
+            {/* SUMMARY CARDS */}
             <div className="row mb-4">
-              <div className="col-md-4">
+
+              {/* OFFICE */}
+              <div className="col-md-3">
                 <div className="card border-0 shadow-sm rounded-3 h-100 p-2">
                   <div className="card-body">
-                    <p className="fw-bold text-dark mb-1">Total Data Sensor Logs</p>
-                    <h2 className="fw-bold" style={{ color: '#2E8B57' }}>{totalSensorLogs}</h2>
+                    <p className="fw-bold text-dark mb-1">
+                      Total Office Sensors
+                    </p>
+
+                    <h2
+                      className="fw-bold"
+                      style={{ color: '#2E8B57' }}
+                    >
+                      {officeSensors.length}
+                    </h2>
+
+                    <small className="text-muted">
+                      Office Area Monitoring
+                    </small>
                   </div>
                 </div>
               </div>
 
-              <div className="col-md-4">
+              {/* WAREHOUSE */}
+              <div className="col-md-3">
                 <div className="card border-0 shadow-sm rounded-3 h-100 p-2">
                   <div className="card-body">
-                    <p className="fw-bold text-dark mb-1">Total Data Attack Logs</p>
-                    <h2 className="fw-bold" style={{ color: '#D9534F' }}>{totalAttackLogs}</h2>
+
+                    <p className="fw-bold text-dark mb-1">
+                      Total Warehouse Sensors
+                    </p>
+
+                    <h2
+                      className="fw-bold"
+                      style={{ color: '#0275D8' }}
+                    >
+                      {warehouseSensors.length}
+                    </h2>
+
+                    <small className="text-muted">
+                      Warehouse Area Monitoring
+                    </small>
+
                   </div>
                 </div>
               </div>
 
-              <div className="col-md-4">
+              {/* ATTACK LOGS */}
+              <div className="col-md-3">
                 <div className="card border-0 shadow-sm rounded-3 h-100 p-2">
                   <div className="card-body">
-                    <p className="fw-bold text-dark mb-1">Installed Sensors</p>
-                    <h2 className="fw-bold" style={{ color: '#0275D8' }}>{installedSensors}</h2>
+
+                    <p className="fw-bold text-dark mb-1">
+                      Total Attack Logs
+                    </p>
+
+                    <h2
+                      className="fw-bold"
+                      style={{ color: '#D9534F' }}
+                    >
+                      {totalAttackLogs}
+                    </h2>
+
+                    <small className="text-muted">
+                      Cybersecurity Simulation Logs
+                    </small>
+
                   </div>
                 </div>
               </div>
+
+              {/* SYSTEM STATUS */}
+              <div className="col-md-3">
+                <div className="card border-0 shadow-sm rounded-3 h-100 p-2">
+                  <div className="card-body">
+
+                    <p className="fw-bold text-dark mb-1">
+                      System Status
+                    </p>
+
+                    <h2
+                      className="fw-bold"
+                      style={{ color: '#5CB85C' }}
+                    >
+                      ACTIVE
+                    </h2>
+
+                    <small className="text-muted">
+                      MQTT & Monitoring Running
+                    </small>
+
+                  </div>
+                </div>
+              </div>
+
             </div>
 
-            <div className="card border-0 shadow-sm rounded-3 mb-4" style={{ minHeight: '350px' }}>
-              <div className="card-body d-flex flex-column align-items-center justify-content-center text-muted">
-                <h5 className="fw-bold text-dark mb-3">RFID RC522 Overview</h5>
-                <p>[ Chart Component Will Go Here ]</p>
+            {/* LATEST OFFICE ACTIVITY */}
+            <div className="card border-0 shadow-sm rounded-3 mb-4">
+
+              <div className="card-body">
+
+                <h5 className="fw-bold text-dark mb-4">
+                  Latest Office Sensor Activity
+                </h5>
+
+                {officeSensors.slice(0, 5).map((sensor: any) => (
+
+                  <div
+                    key={sensor.data_id}
+                    className="border rounded p-3 mb-3"
+                  >
+
+                    <p className="mb-1">
+                      <strong>Area:</strong> Office
+                    </p>
+
+                    <p className="mb-1">
+                      <strong>Sensor:</strong> {sensor.sensor_type}
+                    </p>
+
+                    <p className="mb-1">
+                      <strong>Value:</strong> {sensor.value}
+                    </p>
+
+                    <p className="mb-0 text-muted">
+                      {sensor.timestamp}
+                    </p>
+
+                  </div>
+
+                ))}
+
               </div>
+
             </div>
 
-            <div className="card border-0 shadow-sm rounded-3" style={{ minHeight: '350px' }}>
-              <div className="card-body d-flex flex-column align-items-center justify-content-center text-muted">
-                <h5 className="fw-bold text-dark mb-3">Buzzer Sensor Overview</h5>
-                <p>[ Chart Component Will Go Here ]</p>
+            {/* LATEST WAREHOUSE ACTIVITY */}
+            <div className="card border-0 shadow-sm rounded-3">
+
+              <div className="card-body">
+
+                <h5 className="fw-bold text-dark mb-4">
+                  Latest Warehouse Sensor Activity
+                </h5>
+
+                {warehouseSensors.slice(0, 5).map((sensor: any) => (
+
+                  <div
+                    key={sensor.data_id}
+                    className="border rounded p-3 mb-3"
+                  >
+
+                    <p className="mb-1">
+                      <strong>Area:</strong> Warehouse
+                    </p>
+
+                    <p className="mb-1">
+                      <strong>Sensor:</strong> {sensor.sensor_type}
+                    </p>
+
+                    <p className="mb-1">
+                      <strong>Value:</strong> {sensor.value}
+                    </p>
+
+                    <p className="mb-0 text-muted">
+                      {sensor.timestamp}
+                    </p>
+
+                  </div>
+
+                ))}
+
               </div>
+
             </div>
+
           </div>
         )}
 
@@ -650,7 +788,7 @@ function App() {
         {/* ----------------------------------------------------------------- */}
         {activePage === 'office' && (
           <div className="p-5">
-            <h2 className="fw-bold mb-4">Office Area / Area A</h2>
+            <h2 className="fw-bold mb-4">Office Monitoring | Area A</h2>
 
             <div className="card p-3 mb-4">
               <h5>Office Sensor Data</h5>

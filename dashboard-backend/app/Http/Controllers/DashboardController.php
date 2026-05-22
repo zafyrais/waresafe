@@ -33,7 +33,7 @@ class DashboardController extends Controller
         )
         ->orderBy('sensor_data.timestamp', 'desc')
         ->limit(50)
-        ->get();
+         ->get();
 
     return response()->json($data);
 }
