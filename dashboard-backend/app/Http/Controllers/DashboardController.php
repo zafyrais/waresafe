@@ -78,7 +78,7 @@ public function getOfficeVibrationData()
         ->join('devices', 'sensors.device_id', '=', 'devices.device_id')
         ->join('zones', 'devices.zone_id', '=', 'zones.zone_id')
         ->where('zones.zone_name', 'Office')
-        ->where('sensors.sensor_type', '3')
+        ->where('sensors.sensor_type', 'Vibration Sensor')
         ->select(
             'sensor_data.data_id',
             'sensors.sensor_id',
@@ -101,7 +101,7 @@ public function getOfficeBuzzerData()
         ->join('devices', 'sensors.device_id', '=', 'devices.device_id')
         ->join('zones', 'devices.zone_id', '=', 'zones.zone_id')
         ->where('zones.zone_name', 'Office')
-        ->where('sensors.sensor_type', '4')
+        ->where('sensors.sensor_type', 'Buzzer A')
         ->select(
             'sensor_data.data_id',
             'sensors.sensor_id',

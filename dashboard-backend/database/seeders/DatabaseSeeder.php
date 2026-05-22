@@ -123,7 +123,7 @@ DB::table('sensors')->insert([
         for ($i = 0; $i < 10; $i++) {
             $fakeData[] = [
                 // Randomly pick sensor 1, 2, or 3
-                'sensor_id' => rand(1, 3), 
+                'sensor_id' => rand(1, 11), 
                 // Randomly generate a fake value (like a temperature or a 1/0 for a door)
                 'value' => (string) rand(0, 10), 
                 // Spread the timestamps out over the last few days so your charts look realistic
